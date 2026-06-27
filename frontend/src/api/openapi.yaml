@@ -1,0 +1,65 @@
+openapi: "3.0.3"
+info:
+  title: AutoTranscription API
+  description: API for transcribing audio files using Deepgram
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+paths:
+  /transcribe:
+    post:
+      summary: Transcribe an audio file
+      operationId: transcribeAudio
+      tags:
+        - Transcription
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - audio
+              properties:
+                audio:
+                  type: string
+                  format: binary
+                  description: Audio file to transcribe (e.g. WAV)
+      responses:
+        "200":
+          description: Successful transcription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscriptionResponse"
+        "400":
+          description: No audio file provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscriptionResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscriptionResponse"
+
+components:
+  schemas:
+    TranscriptionResponse:
+      type: object
+      required:
+        - text
+        - status
+      properties:
+        text:
+          type: string
+          description: The transcribed text
+        status:
+          type: string
+          enum: [success, error]
+          description: Status of the transcription
